@@ -48,7 +48,7 @@ public class AlarmViewHolder extends RecyclerView.ViewHolder {
             alarmRecurringDays.setText("Once Off");
         }
 
-        if (alarm.getTitle().length() != 0) {
+        if (alarm.getTitle() != null && alarm.getTitle().length() != 0) {
             alarmTitle.setText(String.format("%s | %d | %d", alarm.getTitle(), alarm.getAlarmId(), alarm.getCreated()));
         } else {
             alarmTitle.setText(String.format("%s | %d | %d", "Alarm", alarm.getAlarmId(), alarm.getCreated()));

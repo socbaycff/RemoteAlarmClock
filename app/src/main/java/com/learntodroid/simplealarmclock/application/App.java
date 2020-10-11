@@ -7,8 +7,12 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
+import com.learntodroid.simplealarmclock.data.Alarm;
 import com.learntodroid.simplealarmclock.fcm.RemoteService;
+
+import java.util.Random;
 
 public class App extends Application {
     public static final String CHANNEL_ID = "ALARM_SERVICE_CHANNEL";
@@ -21,6 +25,7 @@ public class App extends Application {
         if (!isMyServiceRunning(RemoteService.class)) {
             startService(new Intent(getApplicationContext(), RemoteService.class));
         }
+       // scheduleAlarmOnline(22,56,"title");
     }
 
     private void createNotificationChannnel() {
@@ -34,6 +39,30 @@ public class App extends Application {
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
         }
+    }
+    void scheduleAlarmOnline(int hour, int minute, String title) {
+        int alarmId = new Random().nextInt(Integer.MAX_VALUE);
+        Log.i("-----------", "inside function");
+        Alarm alarm = new Alarm(
+                alarmId,
+                hour,
+                minute,
+                title,
+                System.currentTimeMillis(),
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+        );
+
+        // createAlarmViewModel.insert(alarm);
+
+        alarm.schedule(getApplicationContext());
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {

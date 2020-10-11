@@ -15,6 +15,8 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.learntodroid.simplealarmclock.data.Alarm;
 import com.learntodroid.simplealarmclock.R;
 
@@ -29,7 +31,7 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //setTmp();
         alarmRecyclerViewAdapter = new AlarmRecyclerViewAdapter(this);
         alarmsListViewModel = ViewModelProviders.of(this).get(AlarmsListViewModel.class);
         alarmsListViewModel.getAlarmsLiveData().observe(this, new Observer<List<Alarm>>() {
@@ -40,6 +42,11 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
                 }
             }
         });
+    }
+
+    public void setTmp() {
+        Alarm alarm = new Alarm(0, 0, 0, "title", 0, false, false, false, false, false, false, false, false, false);
+        FirebaseFirestore.getInstance().collection("alarms").document(String.valueOf(alarm.getAlarmId())).set(alarm, SetOptions.merge());
     }
 
     @Nullable
