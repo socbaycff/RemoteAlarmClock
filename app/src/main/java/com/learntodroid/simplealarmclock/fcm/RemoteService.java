@@ -1,18 +1,28 @@
 package com.learntodroid.simplealarmclock.fcm;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.learntodroid.simplealarmclock.broadcastreceiver.AlarmBroadcastReceiver;
 import com.learntodroid.simplealarmclock.data.Alarm;
 
 import java.util.Map;
 import java.util.Random;
+
+/*
+* Cac ham ...online chi nhan tin hieu, data da dc web luu vao firestore
+* */
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class RemoteService extends FirebaseMessagingService {
     public RemoteService() {
@@ -23,15 +33,53 @@ public class RemoteService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         System.out.println("------------------");
         Map<String, String> datas = remoteMessage.getData();
-        int hour = Integer.parseInt(datas.get("hour"));
-        int minute = Integer.parseInt(datas.get("minute"));
-        String title = datas.get("title");
-        scheduleAlarmOnline(hour,minute,title);
+
+        String type = datas.get("type"); // message co type
+        int id = Integer.parseInt(datas.get("alarmId")); // id
+        String title;
+
+        int hour;
+        int minute;
+        switch (type) {
+            case "update":
+                title = datas.get("title");
+                 hour = Integer.parseInt(datas.get("hour"));
+                 minute = Integer.parseInt(datas.get("minute"));
+                 id = Integer.parseInt(datas.get("alarmId"));
+                cancelAlarmOnline(id);
+                scheduleAlarmOnline(id, hour,minute,title);
+                break;
+            case "cancel":
+                id = Integer.parseInt(datas.get("alarmId"));
+                cancelAlarmOnline(id);
+                break;
+            case "insert":
+                title = datas.get("title");
+                hour = Integer.parseInt(datas.get("hour"));
+                minute = Integer.parseInt(datas.get("minute"));
+                scheduleAlarmOnline(id, hour,minute,title);
+                break;
+            default:
+
+
+        }
+
+
     }
 
 
-    void scheduleAlarmOnline(int hour, int minute, String title) {
-        int alarmId = new Random().nextInt(Integer.MAX_VALUE);
+    void cancelAlarmOnline(int alarmId) {
+        Context context = getApplicationContext();
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, 0);
+        alarmManager.cancel(alarmPendingIntent);
+       // this.started = false; web da update vao firestore
+
+        Log.i("cancel", "cancel alarm");
+    }
+    void scheduleAlarmOnline(int alarmId,int hour, int minute, String title) {
+       // int alarmId = new Random().nextInt(Integer.MAX_VALUE);
 
         Alarm alarm = new Alarm(
                 alarmId,
@@ -50,15 +98,17 @@ public class RemoteService extends FirebaseMessagingService {
                 false
         );
 
-        // createAlarmViewModel.insert(alarm);
+        // web da insert vao firestore
 
+
+        // schedule bao thuc
         alarm.schedule(getApplicationContext());
     }
 
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
-        System.out.println("---------------------------");
+        System.out.println("---------------------------get token");
         System.out.println(s);
     }
 }

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlarmRecyclerViewAdapter extends RecyclerView.Adapter<AlarmViewHolder> {
-    private List<Alarm> alarms;
+    public List<Alarm> alarms;
     private OnToggleAlarmListener listener;
 
     public AlarmRecyclerViewAdapter(OnToggleAlarmListener listener) {
@@ -34,6 +34,8 @@ public class AlarmRecyclerViewAdapter extends RecyclerView.Adapter<AlarmViewHold
         Alarm alarm = alarms.get(position);
         holder.bind(alarm);
     }
+
+
 
     @Override
     public int getItemCount() {

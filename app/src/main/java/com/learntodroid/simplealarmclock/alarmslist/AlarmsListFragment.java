@@ -1,6 +1,7 @@
 package com.learntodroid.simplealarmclock.alarmslist;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,6 +35,7 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
         super.onCreate(savedInstanceState);
         //setTmp();
         alarmRecyclerViewAdapter = new AlarmRecyclerViewAdapter(this);
+
         alarmsListViewModel = ViewModelProviders.of(this).get(AlarmsListViewModel.class);
         alarmsListViewModel.getAlarmsLiveData().observe(this, new Observer<List<Alarm>>() {
             @Override
@@ -42,6 +45,8 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
                 }
             }
         });
+
+
     }
 
     public void setTmp() {
@@ -65,6 +70,11 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
                 Navigation.findNavController(v).navigate(R.id.action_alarmsListFragment_to_createAlarmFragment);
             }
         });
+
+        new ItemTouchHelper(new AlarmsTouchHelperCallBack((position, direction) -> {
+            Alarm alarm = alarmRecyclerViewAdapter.alarms.get(position);
+           alarmsListViewModel.delete(alarm);
+        })) .attachToRecyclerView(alarmsRecyclerView);
 
         return view;
     }

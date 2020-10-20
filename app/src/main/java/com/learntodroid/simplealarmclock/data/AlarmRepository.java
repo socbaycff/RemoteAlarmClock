@@ -23,28 +23,33 @@ public class AlarmRepository {
         AlarmDatabase db = AlarmDatabase.getDatabase(application);
         alarmDao = db.alarmDao();
         fb = FirebaseFirestore.getInstance();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                alarmDao.deleteAll();
-            }
-        }).start();
+
         fb.collection("alarms").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                List<Alarm> alarms = queryDocumentSnapshots.toObjects(Alarm.class);
-                alarms.forEach(new Consumer<Alarm>() {
-                    @Override
-                    public void accept(Alarm alarm) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                alarmDao.insert(alarm);
-                            }
-                        }).start();
 
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Alarm> alarms = queryDocumentSnapshots.toObjects(Alarm.class);
+                        alarmDao.deleteAll();
+                        alarms.forEach(new Consumer<Alarm>() {
+                            @Override
+                            public void accept(Alarm alarm) {
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        alarmDao.insert(alarm);
+                                    }
+
+                                }).start();
+
+                            }
+                        });
                     }
-                });
+                }).start();
+
+
             }
         });
         alarmsLiveData = alarmDao.getAlarms();
@@ -63,6 +68,10 @@ public class AlarmRepository {
         AlarmDatabase.databaseWriteExecutor.execute(() -> {
             alarmDao.update(alarm);
         });
+    }
+
+    public void delete(Alarm alarm) {
+        fb.collection("alarms").document(String.valueOf(alarm.getAlarmId())).delete();
     }
 
     public LiveData<List<Alarm>> getAlarmsLiveData() {
