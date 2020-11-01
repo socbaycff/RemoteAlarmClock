@@ -1,6 +1,7 @@
 package com.learntodroid.simplealarmclock.alarmslist;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +13,22 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.learntodroid.simplealarmclock.data.Alarm;
 import com.learntodroid.simplealarmclock.R;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class AlarmsListFragment extends Fragment implements OnToggleAlarmListener {
     private AlarmRecyclerListAdapter alarmRecyclerListAdapter;
@@ -36,14 +43,20 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
         alarmRecyclerListAdapter = new AlarmRecyclerListAdapter(this);
 
         alarmsListViewModel = ViewModelProviders.of(this).get(AlarmsListViewModel.class);
-        alarmsListViewModel.getAlarmsLiveData().observe(this, new Observer<List<Alarm>>() {
-            @Override
-            public void onChanged(List<Alarm> alarms) {
-                if (alarms != null) {
-                    alarmRecyclerListAdapter.submitList(alarms);
-                }
+        alarmsListViewModel.getAlarmsLiveData().observe(this, alarms -> {
+            if (alarms != null) {
+                alarmRecyclerListAdapter.submitList(new ArrayList<>(alarms));
             }
         });
+
+//        FirebaseFirestore.getInstance().collection("alarms").addSnapshotListener(new EventListener<QuerySnapshot>() {
+//            @Override
+//            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+//                List<Alarm> alarms = queryDocumentSnapshots.toObjects(Alarm.class);
+//                alarmRecyclerListAdapter.submitList(alarms);
+//                Log.i("test", "chay vao day" + System.currentTimeMillis());
+//            }
+//        });
 
 
     }
@@ -61,19 +74,14 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
         alarmsRecyclerView = view.findViewById(R.id.fragment_listalarms_recylerView);
         alarmsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         alarmsRecyclerView.setAdapter(alarmRecyclerListAdapter);
-
+        alarmsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         addAlarm = view.findViewById(R.id.fragment_listalarms_addAlarm);
-        addAlarm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Navigation.findNavController(v).navigate(R.id.action_alarmsListFragment_to_createAlarmFragment);
-            }
-        });
+        addAlarm.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_alarmsListFragment_to_createAlarmFragment));
 
         new ItemTouchHelper(new AlarmsTouchHelperCallBack((position, direction) -> {
             Alarm alarm = alarmRecyclerListAdapter.getAlarm(position);
-           alarmsListViewModel.delete(alarm);
-        })) .attachToRecyclerView(alarmsRecyclerView);
+            alarmsListViewModel.delete(alarm);
+        })).attachToRecyclerView(alarmsRecyclerView);
 
         return view;
     }

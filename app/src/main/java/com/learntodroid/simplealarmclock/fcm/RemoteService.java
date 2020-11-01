@@ -31,7 +31,7 @@ public class RemoteService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        System.out.println("------------------");
+
         Map<String, String> datas = remoteMessage.getData();
 
         String type = datas.get("type"); // message co type

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlarmRecyclerListAdapter extends ListAdapter<Alarm, AlarmViewHolder> {
-  //  public List<Alarm> alarms;
+
     private OnToggleAlarmListener listener;
 
 
@@ -43,23 +43,29 @@ public class AlarmRecyclerListAdapter extends ListAdapter<Alarm, AlarmViewHolder
         holder.bind(alarm);
     }
 
-
-
+//    @NonNull
 //    @Override
-//    public int getItemCount() {
-//        return getItemCount();
+//    public AlarmViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_alarm, parent, false);
+//        return new AlarmViewHolder(itemView, listener);
 //    }
-
-//    public void setAlarms(List<Alarm> alarms) {
-//        this.alarms = alarms;
-//        notifyDataSetChanged();
+//
+//
+//    @Override
+//    public void onBindViewHolder(@NonNull AlarmViewHolder holder, int position) {
+//        Alarm alarm = getItem(position);
+//        holder.bind(alarm);
 //    }
-
-    @Override
-    public void onViewRecycled(@NonNull AlarmViewHolder holder) {
-        super.onViewRecycled(holder);
-        holder.alarmStarted.setOnCheckedChangeListener(null);
-    }
+//
+//
+//
+//
+//
+//    @Override
+//    public void onViewRecycled(@NonNull AlarmViewHolder holder) {
+//        super.onViewRecycled(holder);
+//        holder.alarmStarted.setOnCheckedChangeListener(null);
+//    }
 
 }
 class AlarmDiffCallback extends DiffUtil.ItemCallback<Alarm> {
@@ -71,7 +77,7 @@ class AlarmDiffCallback extends DiffUtil.ItemCallback<Alarm> {
 
     @Override
     public boolean areContentsTheSame(@NonNull Alarm oldItem, @NonNull Alarm newItem) {
-        return oldItem.getHour() == newItem.getHour() && oldItem.getMinute() == newItem.getMinute() && oldItem.getCreated() == newItem.getCreated() && oldItem.getTitle().equals(newItem.getTitle());
+        return oldItem.getHour() == newItem.getHour() && oldItem.getMinute() == newItem.getMinute() && oldItem.getCreated() == newItem.getCreated() && oldItem.getTitle().equals(newItem.getTitle()) && oldItem.isStarted() == newItem.isStarted();
     }
 }
 
