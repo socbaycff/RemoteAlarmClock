@@ -58,6 +58,7 @@ public class AlarmRepository {
 
     public void insert(Alarm alarm) {
         fb.collection("alarms").document(String.valueOf(alarm.getAlarmId())).set(alarm,SetOptions.merge());
+
         AlarmDatabase.databaseWriteExecutor.execute(() -> {
             alarmDao.insert(alarm);
         });

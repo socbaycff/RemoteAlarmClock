@@ -1,7 +1,6 @@
 package com.learntodroid.simplealarmclock.alarmslist;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,7 @@ import com.learntodroid.simplealarmclock.R;
 import java.util.List;
 
 public class AlarmsListFragment extends Fragment implements OnToggleAlarmListener {
-    private AlarmRecyclerViewAdapter alarmRecyclerViewAdapter;
+    private AlarmRecyclerListAdapter alarmRecyclerListAdapter;
     private AlarmsListViewModel alarmsListViewModel;
     private RecyclerView alarmsRecyclerView;
     private Button addAlarm;
@@ -34,14 +33,14 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setTmp();
-        alarmRecyclerViewAdapter = new AlarmRecyclerViewAdapter(this);
+        alarmRecyclerListAdapter = new AlarmRecyclerListAdapter(this);
 
         alarmsListViewModel = ViewModelProviders.of(this).get(AlarmsListViewModel.class);
         alarmsListViewModel.getAlarmsLiveData().observe(this, new Observer<List<Alarm>>() {
             @Override
             public void onChanged(List<Alarm> alarms) {
                 if (alarms != null) {
-                    alarmRecyclerViewAdapter.setAlarms(alarms);
+                    alarmRecyclerListAdapter.submitList(alarms);
                 }
             }
         });
@@ -61,7 +60,7 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
 
         alarmsRecyclerView = view.findViewById(R.id.fragment_listalarms_recylerView);
         alarmsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        alarmsRecyclerView.setAdapter(alarmRecyclerViewAdapter);
+        alarmsRecyclerView.setAdapter(alarmRecyclerListAdapter);
 
         addAlarm = view.findViewById(R.id.fragment_listalarms_addAlarm);
         addAlarm.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +71,7 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
         });
 
         new ItemTouchHelper(new AlarmsTouchHelperCallBack((position, direction) -> {
-            Alarm alarm = alarmRecyclerViewAdapter.alarms.get(position);
+            Alarm alarm = alarmRecyclerListAdapter.getAlarm(position);
            alarmsListViewModel.delete(alarm);
         })) .attachToRecyclerView(alarmsRecyclerView);
 
