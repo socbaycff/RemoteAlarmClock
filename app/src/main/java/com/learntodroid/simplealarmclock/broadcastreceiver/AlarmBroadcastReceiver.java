@@ -1,24 +1,15 @@
 package com.learntodroid.simplealarmclock.broadcastreceiver;
 
-import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
 import android.widget.Toast;
 
-import androidx.lifecycle.Observer;
-
-import com.learntodroid.simplealarmclock.data.Alarm;
-import com.learntodroid.simplealarmclock.data.AlarmRepository;
 import com.learntodroid.simplealarmclock.service.AlarmService;
 import com.learntodroid.simplealarmclock.service.RescheduleAlarmsService;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class AlarmBroadcastReceiver extends BroadcastReceiver {
     public static final String MONDAY = "MONDAY";
@@ -97,6 +88,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         } else {
             context.startService(intentService);
         }
+
     }
 
     private void startRescheduleAlarmsService(Context context) {
@@ -106,5 +98,8 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         } else {
             context.startService(intentService);
         }
+
     }
+
+
 }

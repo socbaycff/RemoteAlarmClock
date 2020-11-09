@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.Chip;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -34,7 +35,7 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
     private AlarmRecyclerListAdapter alarmRecyclerListAdapter;
     private AlarmsListViewModel alarmsListViewModel;
     private RecyclerView alarmsRecyclerView;
-    private Button addAlarm;
+    private Chip addAlarm;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
