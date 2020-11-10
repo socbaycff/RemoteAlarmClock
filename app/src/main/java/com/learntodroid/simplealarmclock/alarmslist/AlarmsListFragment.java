@@ -74,6 +74,7 @@ public class AlarmsListFragment extends Fragment implements OnToggleAlarmListene
         new ItemTouchHelper(new AlarmsTouchHelperCallBack((position, direction) -> {
             Alarm alarm = alarmRecyclerListAdapter.getAlarm(position);
             alarmsListViewModel.delete(alarm);
+
         })).attachToRecyclerView(alarmsRecyclerView);
 
         return view;

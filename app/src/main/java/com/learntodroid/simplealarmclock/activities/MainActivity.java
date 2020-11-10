@@ -22,6 +22,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.learntodroid.simplealarmclock.R;
+import com.rbddevs.splashy.Splashy;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +30,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        new Splashy(this)  // For JAVA : new Splashy(this)
+                .setLogo(R.drawable.clouds2)
+                .setDuration(1000)
+                .setTitle("Remote Alarm")
+                .setTitleSize(30.0f)
+                .setTitleColor(R.color.colorAccent)
+                .setFullScreen(true)
+                .setAnimation(Splashy.Animation.SLIDE_IN_TOP_BOTTOM,500)
+                .setProgressColor(R.color.white)
+                .show();
         NavController navController = Navigation.findNavController(this, R.id.activity_main_nav_host_fragment);
         AppBarConfiguration appBarConfiguration =
                 new AppBarConfiguration.Builder(navController.getGraph()).build();
