@@ -9,10 +9,17 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.learntodroid.simplealarmclock.data.Alarm;
 import com.learntodroid.simplealarmclock.fcm.RemoteService;
 
 import java.util.Random;
+
+import static android.content.ContentValues.TAG;
 
 public class App extends Application {
     public static final String CHANNEL_ID = "ALARM_SERVICE_CHANNEL";
@@ -25,6 +32,20 @@ public class App extends Application {
         if (!isMyServiceRunning(RemoteService.class)) {
             startService(new Intent(getApplicationContext(), RemoteService.class));
         }
+        FirebaseMessaging.getInstance().subscribeToTopic("remoteAlarm")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if (!task.isSuccessful()) {
+                            Log.d(TAG, "subcribe fail");
+                        } else {
+                            Log.d(TAG, "subcribe success");
+                        }
+
+
+                    }
+                });
        // scheduleAlarmOnline(22,56,"title");
     }
 

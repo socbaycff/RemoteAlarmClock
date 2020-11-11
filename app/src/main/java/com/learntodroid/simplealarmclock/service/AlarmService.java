@@ -43,6 +43,7 @@ public class AlarmService extends Service implements SensorEventListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Intent notificationIntent = new Intent(this, RingActivity.class);
+        notificationIntent.putExtra("alarmId",intent.getIntExtra("alarmId",0));
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         String alarmTitle = String.format("%s Alarm", intent.getStringExtra(TITLE));

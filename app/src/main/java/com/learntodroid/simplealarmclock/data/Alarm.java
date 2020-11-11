@@ -181,7 +181,7 @@ public class Alarm {
         intent.putExtra(SUNDAY, sunday);
 
         intent.putExtra(TITLE, title);
-
+        intent.putExtra("alarmId", alarmId);
         PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, 0);
 
         Calendar calendar = Calendar.getInstance();

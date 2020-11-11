@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,10 +34,13 @@ public class RingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ring);
 
         ButterKnife.bind(this);
-
+        int alarmID = getIntent().getIntExtra("alarmId",0);
+        //Toast.makeText(getApplicationContext(),"id la: " + alarmID, Toast.LENGTH_SHORT).show();
         dismiss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 Intent intentService = new Intent(getApplicationContext(), AlarmService.class);
                 getApplicationContext().stopService(intentService);
                 finish();
